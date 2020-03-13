@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Recipe } from '../recipe.model';
 
 @Component({
@@ -8,6 +8,7 @@ import { Recipe } from '../recipe.model';
 })
 export class RecipeListComponent implements OnInit {
   public recipes: Array<Recipe> = new Array<Recipe>();
+  @Output() recipeWasSelected = new EventEmitter<Recipe>();
 
   constructor() { 
     this.recipes.push(new Recipe('Test recipe', 'Test recipe description', 'https://www.garneczki.pl/blog/wp-content/uploads/2018/07/przepis-na-sniadaniowe-placuszki.jpg' ));
@@ -15,6 +16,10 @@ export class RecipeListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  onRecipeSelected(element:Recipe){
+    this.recipeWasSelected.emit(element);
   }
 
 }

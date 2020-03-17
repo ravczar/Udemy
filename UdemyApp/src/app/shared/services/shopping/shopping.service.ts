@@ -1,4 +1,4 @@
-import { Ingredient } from './../../ingredient.model';
+import { Ingredient } from '../../models/ingredient.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { LoggerService } from '../../logger/logger.service';
 
@@ -24,8 +24,14 @@ export class ShoppingService {
     return this.ingredients.slice();
   }
 
-  setIngredient(ingredient: Ingredient){
+  setIngredient(ingredient: Ingredient):void{
     this.ingredients.push(ingredient);
+    this.actualIngredients.emit(this.ingredients.slice()); //emit only a copy of that array
+    this.loggerService.logNewIngredientAdded();
+  }
+
+  addIngredients(ingredients: Array<Ingredient>):void{
+    this.ingredients.push(...ingredients);
     this.actualIngredients.emit(this.ingredients.slice()); //emit only a copy of that array
     this.loggerService.logNewIngredientAdded();
   }

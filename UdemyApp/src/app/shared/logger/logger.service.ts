@@ -3,6 +3,9 @@ export class LoggerService {
 
   constructor() { }
 
+  public logRequestedSingleRecipeById(id:number){
+    console.log(`Recipe with id: ${id} has been requested from RecipeService`);
+  }
   public logRequestedRecipes():void{
     console.log("Recipes list has been requested from RecipeService");
   }

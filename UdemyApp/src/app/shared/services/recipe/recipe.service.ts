@@ -35,6 +35,11 @@ export class RecipeService {
     return this.recipes.slice(); // now returns a copy, not a reference
   }
 
+  public getRecipeById(id:number): Recipe{
+    this.loggerService.logRequestedSingleRecipeById(id);
+    return this.recipes.slice()[id]; // now return shallow copy
+  }
+
   public setRecie(recipe: Recipe):void {
     this.recipes.push(recipe);
     this.actualRecipes.emit(this.recipes.slice()); // emit ony a copy of this array

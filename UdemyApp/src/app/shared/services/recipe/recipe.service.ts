@@ -1,3 +1,4 @@
+import { Subject } from 'rxjs';
 import { Injectable, EventEmitter } from '@angular/core';
 import { Recipe } from '../../../shared/models/recipe.model';
 import { LoggerService } from '../../logger/logger.service';
@@ -9,8 +10,9 @@ import { ShoppingService } from '../shopping/shopping.service';
 })
 export class RecipeService {
   private recipes: Array<Recipe> = new Array<Recipe>();
-  actualRecipes = new EventEmitter<Array<Recipe>>();
-  selectedRecipe = new EventEmitter<Recipe>();
+  //actualRecipes = new EventEmitter<Array<Recipe>>();
+  //selectedRecipe = new EventEmitter<Recipe>();
+  actualRecipes = new Subject<Array<Recipe>>();
   
   constructor(private loggerService: LoggerService, private shoppingService: ShoppingService) { 
     this.recipes.push(new Recipe('Pancakes recipe', 
@@ -42,7 +44,8 @@ export class RecipeService {
 
   public setRecie(recipe: Recipe):void {
     this.recipes.push(recipe);
-    this.actualRecipes.emit(this.recipes.slice()); // emit ony a copy of this array
+    //this.actualRecipes.emit(this.recipes.slice()); // emit ony a copy of this array
+    this.actualRecipes.next(this.recipes.slice()); // subject, emit copy of array
     this.loggerService.logNewRecipeAdded();
   }
 

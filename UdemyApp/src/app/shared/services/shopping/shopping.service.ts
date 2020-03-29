@@ -1,6 +1,7 @@
 import { Ingredient } from '../../models/ingredient.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { LoggerService } from '../../logger/logger.service';
+import { Subject } from 'rxjs';
 
 
 @Injectable({
@@ -8,7 +9,8 @@ import { LoggerService } from '../../logger/logger.service';
 })
 export class ShoppingService {
   private ingredients: Array<Ingredient> = new Array<Ingredient>();
-  actualIngredients = new EventEmitter<Array<Ingredient>>();
+  //actualIngredients = new EventEmitter<Array<Ingredient>>();
+  actualIngredients = new Subject<Array<Ingredient>>();
   
   constructor(private loggerService: LoggerService) { 
     this.ingredients.push(new Ingredient('Bread', 20));
@@ -26,13 +28,15 @@ export class ShoppingService {
 
   setIngredient(ingredient: Ingredient):void{
     this.ingredients.push(ingredient);
-    this.actualIngredients.emit(this.ingredients.slice()); //emit only a copy of that array
+    //this.actualIngredients.emit(this.ingredients.slice()); //emit only a copy of that array
+    this.actualIngredients.next(this.ingredients.slice());
     this.loggerService.logNewIngredientAdded();
   }
 
   addIngredients(ingredients: Array<Ingredient>):void{
     this.ingredients.push(...ingredients);
-    this.actualIngredients.emit(this.ingredients.slice()); //emit only a copy of that array
+    //this.actualIngredients.emit(this.ingredients.slice()); //emit only a copy of that array
+    this.actualIngredients.next(this.ingredients.slice());
     this.loggerService.logNewIngredientAdded();
   }
 

@@ -27,6 +27,10 @@ export class ShoppingService {
     return this.ingredients.slice();
   }
 
+  getIngredient(index: number): Ingredient{
+    return this.ingredients.slice()[index];
+  }
+
   setIngredient(ingredient: Ingredient):void{
     this.ingredients.push(ingredient);
     //this.actualIngredients.emit(this.ingredients.slice()); //emit only a copy of that array

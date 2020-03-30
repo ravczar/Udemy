@@ -1,28 +1,42 @@
 import { ShoppingService } from './../../shared/services/shopping/shopping.service';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Ingredient } from '../../shared/models/ingredient.model';
+import { NgForm } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-shopping-edit',
   templateUrl: './shopping-edit.component.html',
   styleUrls: ['./shopping-edit.component.css']
 })
-export class ShoppingEditComponent implements OnInit {
-  @ViewChild('nameInput') nameInputRef:ElementRef;
-  @ViewChild('amountInput') amountInputRef:ElementRef;
+export class ShoppingEditComponent implements OnInit, OnDestroy {
+  subscription: Subscription;
+  editMode: boolean = false;
+  editedItemIndex: number;
 
   constructor(private shoppingService: ShoppingService) { }
 
   ngOnInit(): void {
+    this.subscription = this.shoppingService.startedEditing.subscribe(
+      (recipe_id:number) => {
+        this.editMode = true;
+        this.editedItemIndex = recipe_id;
+      }
+    );
   }
 
-  onAddIngredient(){
+  onAddIngredient(form: NgForm){
+    console.log("Składniki: "+ form.value.name +" && " + form.value.amount);
     this.shoppingService.setIngredient(
       new Ingredient(
-        this.nameInputRef.nativeElement.value,
-        this.amountInputRef.nativeElement.value
+        form.value.name,
+        form.value.amount
       )
     );
+  }
+
+  ngOnDestroy(){
+    this.subscription.unsubscribe();
   }
 
 }

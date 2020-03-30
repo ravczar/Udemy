@@ -11,7 +11,8 @@ export class ShoppingService {
   private ingredients: Array<Ingredient> = new Array<Ingredient>();
   //actualIngredients = new EventEmitter<Array<Ingredient>>();
   actualIngredients = new Subject<Array<Ingredient>>();
-  
+  startedEditing = new Subject<number>();
+
   constructor(private loggerService: LoggerService) { 
     this.ingredients.push(new Ingredient('Bread', 20));
     this.ingredients.push(new Ingredient('Butter', 15));

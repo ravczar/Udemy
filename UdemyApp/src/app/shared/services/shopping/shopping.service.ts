@@ -45,4 +45,19 @@ export class ShoppingService {
     this.loggerService.logNewIngredientAdded();
   }
 
+  updateIngredient(index: number, newIngredient: Ingredient): void {
+    console.log(newIngredient);
+    this.ingredients[index] = newIngredient;
+    this.actualIngredients.next(this.ingredients.slice());
+    this.loggerService.logIngredientUpdated(index);
+  }
+
+  deleteIngredient(index: number){
+    //delete this.ingredients[index];
+    this.ingredients.splice(index, 1);
+    this.actualIngredients.next(this.ingredients.slice());
+    this.loggerService.logIngredientDeleted(index);
+
+  }
+
 }

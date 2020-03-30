@@ -19,5 +19,11 @@ export class LoggerService {
   public logNewIngredientAdded():void{
     console.log("New Ingredient has been added to Ingredient Array in ShoppingService");
   }
+  public logIngredientUpdated(index: number):void{
+    console.log(`Ingredient with id ${index} has been updated.`);
+  }
+  public logIngredientDeleted(index: number):void{
+    console.log(`Ingredient wiht id ${index} has been deleted.`);
+  }
 
 }

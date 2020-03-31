@@ -3,7 +3,7 @@ import { RecipeService } from 'src/app/shared/services/recipe/recipe.service';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Recipe } from 'src/app/shared/models/recipe.model';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, FormArray, AbstractControl } from '@angular/forms';
 
 @Component({
   selector: 'app-recipe-edit',
@@ -33,15 +33,33 @@ export class RecipeEditComponent implements OnInit {
     );
   }
   private initForm(): void{
-    let recipeName =  this.editMode ? this.recipe.name : '';
-    let recipeImagePath = this.editMode ? this.recipe.imagePath : '';
-    let recipeDescription = this.editMode ? this.recipe.description : '';
+    let recipeName: string =  this.editMode ? this.recipe.name : '';
+    let recipeImagePath: string = this.editMode ? this.recipe.imagePath : '';
+    let recipeDescription: string = this.editMode ? this.recipe.description : '';
+    let recipeIngredients = new FormArray([]);
+
+    if(this.recipe['ingredients']){ //this.recipe.ingredients.length > 0
+      console.log("This recipe has ingredients! number: " + this.recipe.ingredients.length);
+      for (let ingredient of this.recipe.ingredients){
+        console.log("Pushing item to recipeIngredients");
+        recipeIngredients.push(
+          new FormGroup(
+            {
+              'name': new FormControl(ingredient.name),
+              'amount': new FormControl(ingredient.amount)
+            }
+          )
+        );
+        console.log("Długość utworzonej tablicy: " + recipeIngredients.length);
+      }
+    }
 
     this.recipeForm = new FormGroup(
       {
         'name': new FormControl(recipeName),
         'imagePath': new FormControl(recipeImagePath),
-        'description': new FormControl(recipeDescription)
+        'description': new FormControl(recipeDescription),
+        'ingredients': recipeIngredients
       }
     );
   }
@@ -52,6 +70,10 @@ export class RecipeEditComponent implements OnInit {
 
   getImagePath(): string{
     return this.editMode ? this.recipe.imagePath : '';
+  }
+
+  get controls(): AbstractControl[]{  // getter
+    return (<FormArray>this.recipeForm.get('ingredients')).controls;
   }
 
 }

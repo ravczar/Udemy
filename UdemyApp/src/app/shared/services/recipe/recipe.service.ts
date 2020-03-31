@@ -42,11 +42,17 @@ export class RecipeService {
     return this.recipes.slice()[id]; // now return shallow copy
   }
 
-  public setRecie(recipe: Recipe):void {
+  public setRecie(recipe: Recipe): void {
     this.recipes.push(recipe);
     //this.actualRecipes.emit(this.recipes.slice()); // emit ony a copy of this array
     this.actualRecipes.next(this.recipes.slice()); // subject, emit copy of array
     this.loggerService.logNewRecipeAdded();
+  }
+  
+  public updateRecipe(recipeIndex: number, updatedRecipe: Recipe){
+    this.recipes[recipeIndex] = updatedRecipe;
+    this.actualRecipes.next(this.recipes.slice());
+    this.loggerService.logRecipeUpdated(recipeIndex);
   }
 
   public addSelectedIngredientsToShoppingList(ingredients : Array<Ingredient>):void {

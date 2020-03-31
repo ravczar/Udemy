@@ -3,7 +3,7 @@ import { RecipeService } from 'src/app/shared/services/recipe/recipe.service';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Recipe } from 'src/app/shared/models/recipe.model';
-import { FormGroup, FormControl, FormArray, AbstractControl } from '@angular/forms';
+import { FormGroup, FormControl, FormArray, AbstractControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-recipe-edit',
@@ -18,7 +18,7 @@ export class RecipeEditComponent implements OnInit {
 
   constructor(private recipeService : RecipeService,
               private router: Router, 
-              private route: ActivatedRoute) { }
+              private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.route.params.subscribe(
@@ -38,38 +38,57 @@ export class RecipeEditComponent implements OnInit {
     let recipeDescription: string = this.editMode ? this.recipe.description : '';
     let recipeIngredients = new FormArray([]);
 
-    if(this.recipe['ingredients']){ //this.recipe.ingredients.length > 0
-      console.log("This recipe has ingredients! number: " + this.recipe.ingredients.length);
-      for (let ingredient of this.recipe.ingredients){
-        console.log("Pushing item to recipeIngredients");
-        recipeIngredients.push(
-          new FormGroup(
-            {
-              'name': new FormControl(ingredient.name),
-              'amount': new FormControl(ingredient.amount)
-            }
-          )
-        );
-        console.log("Długość utworzonej tablicy: " + recipeIngredients.length);
+    //checkign if object is not null at first!
+    if(this.recipe != null){
+      if(this.recipe['ingredients']){
+        console.log("This recipe has ingredients! number: " + this.recipe.ingredients.length);
+        for (let ingredient of this.recipe.ingredients){
+          console.log("Pushing item to recipeIngredients");
+          recipeIngredients.push(
+            new FormGroup(
+              {
+                'name': new FormControl(ingredient.name, [Validators.required]),
+                'amount': new FormControl(ingredient.amount, [Validators.required, Validators.pattern(/^[1-9]+[0-9]*$/)])
+              }
+            )
+          );
+          console.log("Długość utworzonej tablicy: " + recipeIngredients.length);
+        }
       }
     }
 
     this.recipeForm = new FormGroup(
       {
-        'name': new FormControl(recipeName),
-        'imagePath': new FormControl(recipeImagePath),
-        'description': new FormControl(recipeDescription),
+        'name': new FormControl(recipeName, [Validators.required]),
+        'imagePath': new FormControl(recipeImagePath, [Validators.required]),
+        'description': new FormControl(recipeDescription, [Validators.required]),
         'ingredients': recipeIngredients
       }
     );
   }
 
   onSubmit():void{
-    console.log(this.recipeForm);
+    //console.log(this.recipeForm);
+    const newRecipe = new Recipe(
+      this.recipeForm.value['name'],
+      this.recipeForm.value['description'],
+      this.recipeForm.value['imagePath'],
+      this.recipeForm.value['ingredients']
+    );
+
+    if (this.editMode){
+      this.recipeService.updateRecipe(this.id, newRecipe);
+    } else {
+      this.recipeService.setRecie(newRecipe);
+    }
   }
 
-  getImagePath(): string{
-    return this.editMode ? this.recipe.imagePath : '';
+  get imagePath(): string{
+    if (this.recipe != null && this.editMode) {
+      return this.recipe.imagePath;
+    } else {
+      return '';
+    }
   }
 
   get controls(): AbstractControl[]{  // getter
@@ -79,8 +98,8 @@ export class RecipeEditComponent implements OnInit {
   onAddIngredient(){
     (<FormArray>this.recipeForm.get('ingredients')).push(
       new FormGroup({
-        'name' : new FormControl(),
-        'amount' : new FormControl()
+        'name' : new FormControl(null , Validators.required),
+        'amount' : new FormControl(null, [Validators.required, Validators.pattern(/^[1-9]+[0-9]*$/)])
       })
     );
   }

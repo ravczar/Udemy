@@ -26,4 +26,8 @@ export class LoggerService {
     console.log(`Ingredient wiht id ${index} has been deleted.`);
   }
 
+  public logRecipeUpdated(index: number):void{
+    console.log(`Recipe with id ${index} has been Updated.`);
+  }
+
 }

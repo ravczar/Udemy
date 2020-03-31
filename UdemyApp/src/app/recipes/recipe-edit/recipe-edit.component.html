@@ -4,7 +4,7 @@
             <!-- Buttons-->
             <div class="row">
                 <div class="col-xs-12">
-                    <button class="btn btn-success" type="submit">Save</button>
+                    <button class="btn btn-success" type="submit" [disabled]="!recipeForm.valid">Save</button>
                     <button class="btn btn-danger" type="button">Cancel</button>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                 <div class="col-xs-12">
                     <div class="form-group">
                         <img 
-                            src=""                              
+                            [src]="imagePath"                              
                             class="img-responsive">
                     </div>
                 </div>

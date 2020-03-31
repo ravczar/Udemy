@@ -1,6 +1,6 @@
 import { Ingredient } from './../../shared/models/ingredient.model';
 import { RecipeService } from 'src/app/shared/services/recipe/recipe.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Recipe } from 'src/app/shared/models/recipe.model';
 import { FormGroup, FormControl, FormArray, AbstractControl, Validators } from '@angular/forms';
@@ -81,6 +81,7 @@ export class RecipeEditComponent implements OnInit {
     } else {
       this.recipeService.setRecie(newRecipe);
     }
+    this.onCancel();
   }
 
   get imagePath(): string{
@@ -104,4 +105,12 @@ export class RecipeEditComponent implements OnInit {
     );
   }
 
+  onCancel(){
+    this.router.navigate(['..'], {relativeTo: this.route});
+  }
+
+  onDeleteIngredient(index : number){
+    (<FormArray>this.recipeForm.get('ingredients')).removeAt(index);
+  }
+  
 }

@@ -55,8 +55,15 @@ export class RecipeService {
     this.loggerService.logRecipeUpdated(recipeIndex);
   }
 
+  public deleteRecipe(recipeIndex: number){
+    this.recipes.splice(recipeIndex, 1);
+    this.actualRecipes.next(this.recipes.slice());
+    this.loggerService.logRecipeDeleted(recipeIndex);
+  }
+
   public addSelectedIngredientsToShoppingList(ingredients : Array<Ingredient>):void {
     this.shoppingService.addIngredients(ingredients);
   }
+  
 
 }

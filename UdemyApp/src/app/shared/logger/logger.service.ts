@@ -30,4 +30,8 @@ export class LoggerService {
     console.log(`Recipe with id ${index} has been Updated.`);
   }
 
+  public logRecipeDeleted(index: number):void{
+    console.log(`Recipe with id ${index} has been Deleted.`);
+  }
+
 }

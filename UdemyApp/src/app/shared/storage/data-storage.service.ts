@@ -2,16 +2,20 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { RecipeService } from '../services/recipe/recipe.service';
 import { Recipe } from '../models/recipe.model';
+import { map, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataStorageService {
 
-  constructor(private http: HttpClient, private recipeService: RecipeService) { }
+  constructor(private http: HttpClient, private recipeService: RecipeService) { 
+    this.fetchRecipes();
+  }
   // httpClent to send HTTP requests in this service. @Injectable to be able get/inject HttpClient
   // 1. Save recipes
   // 2. Store recipes
+  // 3. No data subscribe in component (no use)
 
   storeRecipes() {
     const recipes = this.recipeService.getRecipes();
@@ -27,15 +31,20 @@ export class DataStorageService {
 
   fetchRecipes() {
     console.log("fetching recipes");
-    this.http.get<Recipe[]>(
+    return this.http.get<Recipe[]>(
       'https://ng-rafal-recipe.firebaseio.com/recipes.json'
-      ).subscribe(
-        (response) => {
-          console.log(response);
-          this.recipeService.setRecies(response);
-        }
-
-    );
+      ).pipe( map( recipes => {
+        // add empty array if no ingredients in the recipe!!! (firebase stuff protection)
+        return recipes.map( recipe => {
+          return {...recipe, ingredients: recipe.ingredients ? recipe.ingredients : []}
+        });
+      }),
+      tap( recipes => {
+        // add some code without altering the data.
+        console.log(recipes);
+        this.recipeService.setRecies(recipes);
+      })
+      );
   }
 
 

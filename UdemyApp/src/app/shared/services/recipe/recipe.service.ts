@@ -1,3 +1,4 @@
+import { DataStorageService } from './../../storage/data-storage.service';
 import { Subject } from 'rxjs';
 import { Injectable, EventEmitter } from '@angular/core';
 import { Recipe } from '../../../shared/models/recipe.model';
@@ -14,8 +15,9 @@ export class RecipeService {
   //selectedRecipe = new EventEmitter<Recipe>();
   actualRecipes = new Subject<Array<Recipe>>();
   
-  constructor(private loggerService: LoggerService, private shoppingService: ShoppingService) { 
-    this.recipes.push(new Recipe('Pancakes recipe', 
+  constructor( private loggerService: LoggerService, private shoppingService: ShoppingService) { 
+   
+    /*this.recipes.push(new Recipe('Pancakes recipe', 
       'Test recipe description', 
       'https://www.garneczki.pl/blog/wp-content/uploads/2018/07/przepis-na-sniadaniowe-placuszki.jpg',
       //[new Ingredient('Potatoes', 22), new Ingredient('Eggs', 10)] ));
@@ -29,7 +31,7 @@ export class RecipeService {
       'Test2 recipe description', 
       'https://s.mamotoja.pl/i/tost-zapiekanka-kanapka-BIG-24119.jpg',
       //[new Ingredient('Potatoes', 22), new Ingredient('Eggs', 10)] ));
-      new Array<Ingredient>(new Ingredient('Cheese', 11), new Ingredient('Onion', 8)) ));
+      new Array<Ingredient>(new Ingredient('Cheese', 11), new Ingredient('Onion', 8)) )); */
   }
 
   public getRecipes(): Array<Recipe>{

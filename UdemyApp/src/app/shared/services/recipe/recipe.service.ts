@@ -48,6 +48,13 @@ export class RecipeService {
     this.actualRecipes.next(this.recipes.slice()); // subject, emit copy of array
     this.loggerService.logNewRecipeAdded();
   }
+
+  public setRecies(recipes: Recipe[]): void {
+    this.recipes = recipes;
+    //this.actualRecipes.emit(this.recipes.slice()); // emit ony a copy of this array
+    this.actualRecipes.next(this.recipes.slice()); // subject, emit copy of array
+    this.loggerService.logNewRecipeAdded();
+  }
   
   public updateRecipe(recipeIndex: number, updatedRecipe: Recipe){
     this.recipes[recipeIndex] = updatedRecipe;

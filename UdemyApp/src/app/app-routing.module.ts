@@ -1,3 +1,4 @@
+import { AuthGuardGuard } from './shared/services/auth-guard/auth-guard.guard';
 import { AuthComponent } from './auth/auth.component';
 import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
 import { RecipeDetailComponent } from './recipes/recipe-detail/recipe-detail.component';
@@ -11,7 +12,7 @@ import { RecipesResolverService } from './shared/resolvers/recipes-resolver.serv
 
 const routes: Routes = [
   { path: '', redirectTo: '/recipes', pathMatch:'full'},
-  { path: 'recipes', component: RecipesComponent, children:[
+  { path: 'recipes', component: RecipesComponent, canActivate:[AuthGuardGuard], children:[
     { path: '', component: RecipeStartComponent },
     { path: 'new', component:RecipeEditComponent },
     { path: ':id', component:RecipeDetailComponent, resolve: [RecipesResolverService] },

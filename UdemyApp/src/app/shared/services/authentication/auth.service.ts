@@ -86,6 +86,9 @@ export class AuthService {
       expirationDate
     );
     this.user.next(user);
+    localStorage.setItem('userData', JSON.stringify(user));
+    console.log("DANE Z LOCAL STORAGE");
+    console.log(localStorage.getItem('userData'));
   }
 
   logout(){

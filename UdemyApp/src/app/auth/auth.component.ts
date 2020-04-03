@@ -1,5 +1,5 @@
 import { AuthResponse } from './../shared/interfaces/auth-response';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { AuthService } from './../shared/services/authentication/auth.service';
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
@@ -40,41 +40,32 @@ export class AuthComponent implements OnInit, OnDestroy {
     // wyłuskanie zmiennych
     const email = form.value.email;
     const password = form.value.password;
+
+    let authObsrvable: Observable<AuthResponse>;
     
     this.isLoading = true;
     if( this.isLoginMode ) {
-      this.signInSub = this.authService.signIn(email, password)
-      .subscribe(
-        (response) => {
-          console.log("Dane logwania (signIn) z serwera:");
-          console.log(response);
-          this.apiResponse = response;
-          this.isLoading = false;
-        }, (errorMessage: string) =>{
-          console.log("niestety wystąpił błąd signIn");
-          console.log(errorMessage);
-          this.error = errorMessage;
-          this.isLoading = false;
-        }
-      );
+      authObsrvable = this.authService.signIn(email, password);
+      
     } else {
-      this.signUpSub = this.authService.signUp(email, password)
-        .subscribe(
-          (response:AuthResponse) => {
-            console.log("Dane rejestracji (signUp) z serwera:");
-            console.log(response);
-            this.apiResponse = response;
-            this.isLoading = false;
-          }, 
-          (errorMessage: string) => {
-            console.log("niestety wystąpił błąd signUp")
-            console.log(errorMessage);
-            this.error = errorMessage;
-            this.isLoading = false;
-          }
-        );     
+      authObsrvable = this.authService.signUp(email, password);     
+    }
+
+    authObsrvable.subscribe(
+      (response:AuthResponse) => {
+        console.log("Dane rejestracji signup/signin z serwera:");
+        console.log(response);
+        this.apiResponse = response;
+        this.isLoading = false;
+      }, 
+      (errorMessage: string) => {
+        console.log("niestety wystąpił błąd SignUp/SignIn")
+        console.log(errorMessage);
+        this.error = errorMessage;
+        this.isLoading = false;
       }
-      form.reset();
+    );
+    form.reset();
   }
 
 

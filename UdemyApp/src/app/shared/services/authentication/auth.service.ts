@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthResponse } from '../../interfaces/auth-response'
 import { catchError } from 'rxjs/operators';
@@ -21,20 +21,7 @@ export class AuthService {
         returnSecureToken: true
       }
     )
-    .pipe( catchError( errorResponse => {
-      let errorMessage = 'An unknown error';
-
-      if(!errorResponse.error || !errorResponse.error.error ){
-        // e.g. network message error appeard that not suits HttpErrorResponse body
-        return throwError(errorMessage);
-      }
-      switch (errorResponse.error.error.message) {
-        case 'EMAIL_EXISTS':
-          errorMessage = 'This email exists already';
-          break;
-      }
-      return throwError(errorMessage);
-  }));
+    .pipe( catchError( this.handleError ));
   }
 
   signIn (email: string, password: string){
@@ -46,19 +33,28 @@ export class AuthService {
         returnSecureToken: true
       }
     )
-    .pipe( catchError( errorResponse => {
-        let errorMessage = 'An unknown error';
+    .pipe( catchError( this.handleError ));
+  }
 
-        if(!errorResponse.error || !errorResponse.error.error ){
-          return throwError(errorMessage);
-        }
-        switch (errorResponse.error.error.message) {
-          case 'INVALID_PASSWORD':
-            errorMessage = 'Please use a valid password';
-            break;
-        }
+  private handleError(errorResponse: HttpErrorResponse){
+    let errorMessage = 'An unknown error';
+
+      if(!errorResponse.error || !errorResponse.error.error ){
+        // e.g. network message error appeard that not suits HttpErrorResponse body
         return throwError(errorMessage);
-    }));
+      }
+      switch (errorResponse.error.error.message) {
+        case 'EMAIL_EXISTS':
+          errorMessage = 'This email exists already';
+          break;
+        case 'INVALID_PASSWORD':
+          errorMessage = 'Please use a valid password';
+          break;
+        case 'EMAIL_NOT_FOUND':
+          errorMessage = 'Such e-mail does not exist';
+          break;
+      }
+      return throwError(errorMessage);
   }
 
 }

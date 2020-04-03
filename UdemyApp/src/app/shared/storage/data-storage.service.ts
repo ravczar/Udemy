@@ -36,32 +36,22 @@ export class DataStorageService {
   }
 
   fetchRecipes() {
-    console.log("fetching recipes");
-
-    return this.authService.user.pipe(
-      take(1), 
-      exhaustMap( (user: User) => {
-        console.log("PATRZ TUTAJ");
-        console.log(user);
-        return this.http.get<Recipe[]>(
-          'https://ng-rafal-recipe.firebaseio.com/recipes.json',
-          {
-            params: new HttpParams().set('auth', user.token),
-            headers: new HttpHeaders().set('bearerToken', 'FAF@@$FT@G@G@DUPA')
-          }
-        );
-    }),
-    map( recipes => {
-      // add empty array if no ingredients in the recipe!!! (firebase stuff protection)
-      return recipes.map( recipe => {
-        return {...recipe, ingredients: recipe.ingredients ? recipe.ingredients : []}
-      });
-    }),
-    tap( recipes => {
-      // add some code without altering the data.
-      console.log(recipes);
-      this.recipeService.setRecies(recipes);
-    })
+    console.log("FETCHING RECIPE");
+    return this.http.get<Recipe[]>(
+      'https://ng-rafal-recipe.firebaseio.com/recipes.json',    
+    )
+    .pipe(
+      map( recipes => {
+        // add empty array if no ingredients in the recipe!!! (firebase stuff protection)
+        return recipes.map( recipe => {
+          return {...recipe, ingredients: recipe.ingredients ? recipe.ingredients : []}
+        });
+      }),
+      tap( recipes => {
+        // add some code without altering the data.
+        console.log(recipes);
+        this.recipeService.setRecies(recipes);
+      })
     );
   }
 

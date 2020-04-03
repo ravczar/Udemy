@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthResponse } from '../../interfaces/auth-response'
@@ -13,7 +14,7 @@ export class AuthService {
 
   private APIKey: string = 'AIzaSyCbrDx0TrrY-VfPaCIHj_TU_DbOnmi8SqQ';
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient, private router: Router) { }
 
   signUp( email: string, password: string){
     return this.httpClient.post<AuthResponse>(
@@ -85,6 +86,11 @@ export class AuthService {
       expirationDate
     );
     this.user.next(user);
+  }
+
+  logout(){
+    this.user.next(null);
+    this.router.navigate(['/auth']);
   }
 
 }

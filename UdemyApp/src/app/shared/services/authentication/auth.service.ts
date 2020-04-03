@@ -11,6 +11,7 @@ import { User } from '../../models/user.model';
 })
 export class AuthService {
   user = new BehaviorSubject<User>( null );
+  private tokenExpirationTimer: any;
 
   private APIKey: string = 'AIzaSyCbrDx0TrrY-VfPaCIHj_TU_DbOnmi8SqQ';
 
@@ -33,6 +34,33 @@ export class AuthService {
         +responseData.expiresIn
       );
     }));
+  }
+
+  autoSignIn(){
+    const userData: {
+      email: string, 
+      id: string, 
+      _token: string, 
+      _tokenExpirationDate: string
+    } = JSON.parse(localStorage.getItem('userData'));
+    const isUserLoggedIn:boolean = userData ? true : false;
+    if (!isUserLoggedIn){
+      return; // nie ma user w local storage
+    } else {
+      const loadedUser: User = new User(
+        userData.email, 
+        userData.id, 
+        userData._token, 
+        new Date(userData._tokenExpirationDate)
+      );
+
+      if(loadedUser.token){
+        this.user.next(loadedUser);
+        // difference in miliseconds
+        const expirationDuraiton = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
+        this.autoLogout(expirationDuraiton);
+      }
+    }
   }
 
   signIn (email: string, password: string){
@@ -86,6 +114,7 @@ export class AuthService {
       expirationDate
     );
     this.user.next(user);
+    this.autoLogout(expiresIn * 1000);
     localStorage.setItem('userData', JSON.stringify(user));
     console.log("DANE Z LOCAL STORAGE");
     console.log(localStorage.getItem('userData'));
@@ -94,6 +123,19 @@ export class AuthService {
   logout(){
     this.user.next(null);
     this.router.navigate(['/auth']);
+    localStorage.removeItem('userData');
+    // czyszczenie timera wylogowywania
+    if(this.tokenExpirationTimer) {
+      clearTimeout(this.tokenExpirationTimer);
+    }
+    this.tokenExpirationTimer = null;
+  }
+
+  // uruchamia licznik do momentu wylogowania
+  autoLogout( expirationDuration: number){
+    this.tokenExpirationTimer = setTimeout(() => { 
+      this.logout() 
+    }, expirationDuration);
   }
 
 }

@@ -4,6 +4,7 @@ import { AuthService } from './../shared/services/authentication/auth.service';
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth',
@@ -20,12 +21,12 @@ export class AuthComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
   error: string;
 
-  constructor( private authService: AuthService) { }
+  constructor( private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
   }
   ngOnDestroy(): void {
-    this.signUpSub.unsubscribe();
+    //this.signUpSub.unsubscribe();
   }
 
   onSwitchMode() {
@@ -57,6 +58,8 @@ export class AuthComponent implements OnInit, OnDestroy {
         console.log(response);
         this.apiResponse = response;
         this.isLoading = false;
+        // nawigujemy do listy przepisów po udanym logowaniu/rejestracji
+        this.router.navigate(['/recipes']);
       }, 
       (errorMessage: string) => {
         console.log("niestety wystąpił błąd SignUp/SignIn")

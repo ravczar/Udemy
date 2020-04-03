@@ -7,9 +7,10 @@ export class User {
     ){}    
 
     get token(){
-        if(this._tokenExpirationDate || new Date() > this._tokenExpirationDate){
+        if(!this._tokenExpirationDate || new Date() > this._tokenExpirationDate){
             return null;
         }
+        console.log("USER zwraca token: " + this._token);
         return this._token;
     }
     
